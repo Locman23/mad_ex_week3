@@ -1,79 +1,71 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Platform, StatusBar, StyleSheet, View } from 'react-native';
+import Home from './src/screens/Home';
+import Rules from './src/screens/Rules';
+import Credit from './src/screens/Credit';
+import colors from './src/constants/color';
 
 export default function App() {
-  const board = [
-    ['X', 'O', 'X'],
-    ['O', 'X', ''],
-    ['', 'O', 'X'],
-  ];
+  const [screen, setScreen] = useState('home');
+
+  let content = null;
+
+  if (screen === 'rules') {
+    content = <Rules onBack={() => setScreen('home')} />;
+  } else if (screen === 'credits') {
+    content = <Credit onBack={() => setScreen('home')} />;
+  } else {
+    content = (
+      <Home
+        onOpenRules={() => setScreen('rules')}
+        onOpenCredits={() => setScreen('credits')}
+      />
+    );
+  }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tic Tac Toe</Text>
-
-      <View style={styles.boardFrame}>
-        <View style={styles.board}>
-          {board.map((row, rowIndex) => (
-            <View key={rowIndex} style={styles.row}>
-              {row.map((cell, cellIndex) => (
-                <View key={cellIndex} style={styles.cell}>
-                  <Text style={styles.cellText}>{cell}</Text>
-                </View>
-              ))}
-            </View>
-          ))}
-        </View>
+    <View style={styles.safeArea}>
+      <StatusBar barStyle="dark-content" />
+      <View style={styles.container}>
+        <View style={styles.orbOne} />
+        <View style={styles.orbTwo} />
+        {content}
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.background,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+  },
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
+    backgroundColor: colors.background,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,
   },
-  title: {
-    color: '#0f172a',
-    fontSize: 30,
-    fontWeight: '600',
-    letterSpacing: 0.5,
-    marginBottom: 20,
+  orbOne: {
+    position: 'absolute',
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    backgroundColor: colors.orbOne,
+    top: 40,
+    right: 10,
+    opacity: 0.7,
   },
-  boardFrame: {
-    padding: 14,
-    borderRadius: 20,
-    backgroundColor: '#dbeafe',
-    borderWidth: 1.5,
-    borderColor: '#93c5fd',
-  },
-  board: {
-    width: 300,
-    height: 300,
-    backgroundColor: '#ffffff',
-    borderWidth: 1,
-    borderColor: '#bfdbfe',
-    borderRadius: 14,
-    overflow: 'hidden',
-  },
-  row: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  cell: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#ffffff',
-  },
-  cellText: {
-    color: '#334155',
-    fontSize: 42,
-    fontWeight: '500',
+  orbTwo: {
+    position: 'absolute',
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    backgroundColor: colors.orbTwo,
+    bottom: 80,
+    left: 10,
+    opacity: 0.8,
   },
 });
