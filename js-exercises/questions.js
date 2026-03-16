@@ -28,6 +28,7 @@
  */
 function filterNegativeNumbers(numbers) {
   // Your implementation here
+  return numbers.filter(number => number >= 0);
 }
 
 /**
@@ -46,7 +47,12 @@ function filterNegativeNumbers(numbers) {
  * @return {number[]} A new array containing the numbers divisible by three doubled.
  */
 function doubleDivisibleByThree(numbers) {
-  // Your implementation here
+  return numbers.reduce((result, number) => {
+    if (number % 3 === 0) {
+      result.push(number * 2);
+    }
+    return result;
+  }, []);
 }
 
 /**
@@ -75,7 +81,10 @@ function doubleDivisibleByThree(numbers) {
  * @return {Object[]} An array of objects containing the name and email of qualifying students, sorted by name.
  */
 function selectHighPerformingStudents(students) {
-  // Your implementation here
+  return students
+    .filter(student => student.GPA >= 5 && student.hobbies.includes('coding'))
+    .map(student => ({ name: student.name, email: student.email }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 /**
@@ -103,7 +112,34 @@ function selectHighPerformingStudents(students) {
  * @return {Object} An object containing aggregated student data.
  */
 function aggregateStudentData(students) {
-  // Your implementation here
+  const totals = students.reduce(
+    (acc, student) => {
+      acc.studentNum += 1;
+      acc.totalGPA += student.GPA;
+
+      if (student.hobbies.includes('coding')) {
+        acc.codingStudentNum += 1;
+        acc.codingTotalGPA += student.GPA;
+      }
+
+      return acc;
+    },
+    { studentNum: 0, totalGPA: 0, codingStudentNum: 0, codingTotalGPA: 0 }
+  );
+
+  const studentAvgGPA = totals.studentNum
+    ? parseFloat((totals.totalGPA / totals.studentNum).toFixed(2))
+    : 0;
+  const codingStudentGPA = totals.codingStudentNum
+    ? parseFloat((totals.codingTotalGPA / totals.codingStudentNum).toFixed(2))
+    : 0;
+
+  return {
+    studentNum: totals.studentNum,
+    studentAvgGPA,
+    codingStudentNum: totals.codingStudentNum,
+    codingStudentGPA,
+  };
 }
 
 /**
@@ -126,7 +162,15 @@ function aggregateStudentData(students) {
  * @return {string} The converted string, either in camelCase or sentence form.
  */
 function swapForm(input) {
-  // Your implementation here
+  if (input.includes(' ')) {
+    return input
+      .trim()
+      .split(/\s+/)
+      .map((word, index) => (index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)))
+      .join('');
+  }
+
+  return input.replace(/([A-Z])/g, ' $1').toLowerCase();
 }
 
 // Export the function for testing with Jest
